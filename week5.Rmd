@@ -1,0 +1,155 @@
+---
+title: Week 5 exercise
+author: Narges Rezaie
+date: Feb, 2020
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    toc: yes
+---
+
+```{r}
+library(ggplot2)
+library(ggpubr)
+```
+
+### Plotting basics in base R
+
+```{r}
+plot(sin)
+```
+
+Change it so that the `x` axis label is $\sigma$ and the `y` axis label is $\tau$.
+Those are the Greek letters "sigma" and "tau", respectively.
+```{r}
+plot(sin, xlab = expression(sigma), ylab = expression(tau))
+```
+
+Take the same plot, and change the `x` axis label to $\sigma^2_s$.
+```{r}
+plot(sin, xlab=expression(sigma[s]^2))
+```
+
+#### Color and line style (base graphics)
+
+For the same plot as above, change the plot so that the line is red, "dot-dash", and 3 times the default line thickness.
+```{r}
+plot(sin, col = "red", lty = 4, lwd = 3)
+```
+
+#### Axis labels from data
+
+Take the graph we started with, and assume there's a variable `y = 7`.
+Add a title to the graph that says $\Gamma = 7$.
+(That's the Greek letter "gamma".)
+Do it using the variable! 
+Don't "hard-code" in the value!
+```{r}
+y = 7
+plot(sin, main = bquote(Gamma == .(y)))
+```
+
+#### Annotations from data
+
+Take the graph we started with, and assume there's a variable `y = 7`.
+Add a text element at coordinates `x=0.1, y=0.4` to the graph that says $\Gamma = 7$.
+```{r}
+y = 7
+plot(sin)
+text(x=0.1, y=0.4, bquote(Gamma == .(y)))
+```
+
+#### Saving files
+
+Save one of your graphics in the following formats:
+
+* pdf with 18 point font, 10" by 10" square
+* tiff with 18 point font, 10" by 10" square and the x axis font is 1/2 the global font size.
+* 72 dpi png with 18 point font, 10" by 10" square
+* 300 dpi png with 18 point font, 10" by 10" square
+```{r, include=FALSE}
+pdf(file="week5.pdf", width = 10, height = 10)
+y = 7
+par(ps = 18)
+plot(sin)
+text(x=0.1, y=0.4, bquote(Gamma == .(y)))
+dev.off()
+```
+
+```{r, include=FALSE}
+tiff(file="week5.tiff", width = 10, height = 10, units = "in", res = 500)
+y = 7
+par(ps = 18)
+plot(sin, axes=F)
+axis(2)
+axis(1, cex.axis = 0.5)
+text(x=0.1, y=0.4, bquote(Gamma == .(y)))
+dev.off()
+```
+
+```{r, include=FALSE}
+png(file="week5Dpi72.png", width = 10, height = 10, units = "in", res = 72)
+y = 7
+par(ps = 18)
+plot(sin)
+text(x=0.1, y=0.4, bquote(Gamma == .(y)))
+dev.off()
+```
+
+```{r, include=FALSE}
+png(file="week5dpi300.png", width = 10, height = 10, units = "in", res = 300)
+y = 7
+par(ps = 18)
+plot(sin)
+text(x=0.1, y=0.4, bquote(Gamma == .(y)))
+dev.off()
+```
+
+### R/ggplot
+
+Take the following ggplot:
+```{r}
+library(ggplot2)
+data(mtcars)
+p = ggplot(mtcars, aes(x=cyl, y = mpg)) + geom_point()
+print(p)
+```
+
+Repeat the various manipulations above.
+Where the above instructions refer to lines, change point color/size/shape instead.
+```{r}
+p1 = p + xlab(expression(sigma)) + ylab(expression(tau))
+print(p1)
+```
+
+```{r}
+p2 = p + xlab(expression(sigma[s]^2))
+print(p2)
+```
+
+```{r}
+p3 = p + geom_point(color='blue', size=2, shape= 15)
+print(p3)
+```
+
+```{r}
+y = 7
+p4 = p + ggtitle(bquote(Gamma == .(y)))
+print(p4)
+```
+
+```{r}
+y = 7
+p + annotate("text",label = bquote(Gamma == .(y)), x = 4.5, y = 15)
+```
+
+Also, use the `ggpubr` library to plot two ggplots side by side.
+```{r}
+ggarrange(p1, p2, ncol = 2)
+```
+
+Do it again, but as a 2x2 matrix of 4 plots.
+```{r}
+ggarrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
+```
